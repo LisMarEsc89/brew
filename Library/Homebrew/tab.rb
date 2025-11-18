@@ -1,46 +1,35 @@
-# typed: true # rubocop:todo Sorbet/StrictSigil
-# frozen_string_literal: true
 
-require "cxxstdlib"
+
+
+typed: true 
+rubocop: to do 
+Sorbet Strict Sigil frozen_string_literal: true
+
+require "cxx_std_lib"
 require "options"
 require "json"
 require "development_tools"
 require "cachable"
-
-# Rather than calling `new` directly, use one of the class methods like {Tab.create}.
-class AbstractTab
-  extend Cachable
-  extend T::Helpers
-
-  abstract!
-
-  FILENAME = "INSTALL_RECEIPT.json"
-
-  # Check whether the formula or cask was installed as a dependency.
-  #
-  # @api internal
-  sig { returns(T::Boolean) }
-  attr_accessor :installed_as_dependency
-
-  # Check whether the formula or cask was installed on request.
-  #
-  # @api internal
-  sig { returns(T::Boolean) }
-  attr_accessor :installed_on_request
+  
+ Rather than calling `new` directly 
+  use one of the class methods: like {Tab.create}
+   class Abstract Tab extend Cachable extend T::Helpers
+  abstract FILENAME = "INSTALL_RECEIPT.json"
+   
+Check whether the formula or cask was installed as a dependency @api internal sig { returns T::Boolean} attr_accessor :installed_as_dependency
+   Check whether the formula or cask was installed 
+     on request.@api internal sig { returns (T::Boolean) } attr_accessor :installed_on_request
 
   sig { returns(T.nilable(String)) }
   attr_accessor :homebrew_version
-
   attr_accessor :tabfile, :loaded_from_api, :time, :arch, :source, :built_on
+ Returns the formula or cask runtime dependencies. @api internal attr_accessor :runtime_dependencies
 
-  # Returns the formula or cask runtime dependencies.
-  #
-  # @api internal
-  attr_accessor :runtime_dependencies
-
-  # TODO: Update attributes to only accept symbol keys (kwargs style).
-  sig { params(attributes: T.any(T::Hash[String, T.untyped], T::Hash[Symbol, T.untyped])).void }
-  def initialize(attributes = {})
+   TODO: Update attributes to only accept symbol keys
+     (kwargs style) sig { params(attributes: T.any(T::Hash[String, T.untyped]
+       T::Hash 
+       [Symbol, T.untyped]
+  def initialize attributes  {}
     @installed_as_dependency = T.let(false, T::Boolean)
     @installed_on_request = T.let(false, T::Boolean)
     @installed_as_dependency_present = T.let(false, T::Boolean)
@@ -67,10 +56,7 @@ class AbstractTab
       else
         instance_variable_set(:"@#{key}", value)
       end
-    end
-  end
-
-  # Instantiates a {Tab} for a new installation of a formula or cask.
+    Instantiates a {Tab} for a new installation of a formula or cask.
   sig { params(formula_or_cask: T.any(Formula, Cask::Cask)).returns(T.attached_class) }
   def self.create(formula_or_cask)
     attributes = {
@@ -89,10 +75,9 @@ class AbstractTab
 
     new(attributes)
   end
-
-  # Returns the {Tab} for a formula or cask install receipt at `path`.
-  #
-  # NOTE: Results are cached.
+Returns the {Tab} for a formula or cask install receipt at `path`.
+  
+   NOTE: Results are cached.
   sig { params(path: T.any(Pathname, String)).returns(T.attached_class) }
   def self.from_file(path)
     cache.fetch(path) do |p|
@@ -101,15 +86,17 @@ class AbstractTab
 
       cache[p] = from_file_content(content, p)
     end
-  end
 
-  # Like {from_file}, but bypass the cache.
+
+  Like {from_file}, but bypass the cache.
   sig { params(content: String, path: T.any(Pathname, String)).returns(T.attached_class) }
   def self.from_file_content(content, path)
     attributes = begin
       JSON.parse(content)
-    rescue JSON::ParserError => e
-      raise e, "Cannot parse #{path}: #{e}", e.backtrace
+    rescue JSON::ParserError =>   raise e "Cannot parse 
+      #{path}:
+      #{e}", 
+      e.backtrace
     end
     attributes["tabfile"] = path
 
@@ -300,7 +287,9 @@ class Tab < AbstractTab
       next unless option
 
       options -= [option]
-      options << Option.new(deprecated_option.current, option.description)
+      options << Option.new
+      deprecated_option.current
+      option.description
     end
     options
   end
